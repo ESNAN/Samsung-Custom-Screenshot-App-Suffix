@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Screenshot Suffix Fix</string>
+    <string name="xposed_description">Restores filename suffix for Samsung screenshots of non-ASCII apps (customizable)</string>
+    <string-array name="xposed_scope">
+        <item>com.android.systemui</item>
+    </string-array>
+</resources>

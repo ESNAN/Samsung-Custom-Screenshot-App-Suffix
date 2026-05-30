@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -22,16 +23,6 @@
         <meta-data
             android:name="xposedscope"
             android:resource="@array/xposed_scope" />
-
-        <meta-data
-            android:name="xposedsharedprefs"
-            android:value="true" />
-
-        <!-- 跨进程配置:hook 进程 query 此 provider 读后缀映射 -->
-        <provider
-            android:name=".SuffixProvider"
-            android:authorities="com.suffixfix.xposed.provider"
-            android:exported="true" />
 
         <!-- 配置界面:LSPosed 模块列表点击进入 -->
         <activity

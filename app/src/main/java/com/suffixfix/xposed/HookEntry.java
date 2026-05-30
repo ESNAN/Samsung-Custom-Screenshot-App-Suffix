@@ -1,11 +1,6 @@
 package com.suffixfix.xposed;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -95,7 +90,7 @@ public class HookEntry implements IXposedHookLoadPackage {
         if (ctx == null) return null;
         String pkg = topPackage(cl, ctx);
         if (pkg == null) return null;
-        String suffix = loadMap(ctx).get(pkg);
+        String suffix = loadSuffix(pkg);
         if (suffix == null || suffix.isEmpty()) return null;
         return base + "_" + suffix + ext;
     }
@@ -124,15 +119,7 @@ public class HookEntry implements IXposedHookLoadPackage {
         }
     }
 
-    private static Map<String, String> loadMap(Context ctx) {
-        Map<String, String> map = new HashMap<>();
-        Uri uri = Uri.parse("content://" + SuffixProvider.AUTHORITY + "/suffix");
-        try (Cursor c = ctx.getContentResolver().query(uri, null, null, null, null)) {
-            if (c != null) while (c.moveToNext()) {
-                map.put(c.getString(0), c.getString(1));
-            }
-        } catch (Throwable ignored) {
-        }
-        return map;
+    private static String loadSuffix(String pkg) {
+        return Config.get(pkg);
     }
 }

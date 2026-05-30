@@ -2,7 +2,6 @@ package com.suffixfix.xposed;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Outline;
@@ -21,6 +20,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
@@ -58,12 +58,31 @@ public class MainActivity extends Activity {
             i.putExtra("pkg", rows.get(position).pkg);
             startActivity(i);
         });
+
+        requestStorage();
+    }
+
+    private void requestStorage() {
+        if (!android.os.Environment.isExternalStorageManager()) {
+            Intent i = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                    android.net.Uri.parse("package:" + getPackageName()));
+            try {
+                startActivity(i);
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (android.os.Environment.isExternalStorageManager()) scan();
     }
 
     private void scan() {
         rows.clear();
         int set = 0;
-        SharedPreferences sp = prefs();
+        Map<String, String> sp = Config.load();
         PackageManager pm = getPackageManager();
         for (ApplicationInfo ai : pm.getInstalledApplications(0)) {
             if (pm.getLaunchIntentForPackage(ai.packageName) == null) continue;
@@ -72,7 +91,7 @@ public class MainActivity extends Activity {
             Row r = new Row();
             r.pkg = ai.packageName;
             r.name = SamsungLabel.displayLabel(this, ai);
-            r.suffix = sp.getString(ai.packageName, null);
+            r.suffix = sp.get(ai.packageName);
             if (r.suffix != null && !r.suffix.isEmpty()) set++;
             try {
                 r.icon = pm.getApplicationIcon(ai);
@@ -92,10 +111,6 @@ public class MainActivity extends Activity {
         s.append("/").append(String.valueOf(unset));
         s.setSpan(new ForegroundColorSpan(getColor(R.color.accent_red)), slash + 1, s.length(), 0);
         title.setText(s);
-    }
-
-    private SharedPreferences prefs() {
-        return getSharedPreferences(Const.PREF_SUFFIX, MODE_PRIVATE);
     }
 
     private final class RowAdapter extends BaseAdapter {

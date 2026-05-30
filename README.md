@@ -14,4 +14,4 @@ A One UI 8 module that prevents empty screenshot filename suffixes caused by non
 ## Plan
 #### Achieve system-wide takeover, allowing custom screenshot names for any app.
 #### Toggle between dark and light mode
-
+#### Supports multi-language suffix formats (currently only English is supported).
